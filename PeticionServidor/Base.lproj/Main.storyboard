@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="PeticionServidor" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Prueba de OCR" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" minimumFontSize="11" translatesAutoresizingMaskIntoConstraints="NO" id="EGe-21-5lc">
+                                <rect key="frame" x="16" y="20" width="343" height="45"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HeT-Li-Gfw">
+                                <rect key="frame" x="16" y="605" width="63" height="42"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="63" id="1v2-lT-tFJ"/>
+                                    <constraint firstAttribute="height" constant="42" id="TnQ-bc-93U"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="Selfie"/>
+                                <connections>
+                                    <action selector="tomarSelfie:" destination="BYZ-38-t0r" eventType="touchUpInside" id="AMR-Te-zFc"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9yk-l2-kiq">
+                                <rect key="frame" x="16" y="542" width="75" height="42"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="42" id="1LS-m7-3P2"/>
+                                    <constraint firstAttribute="width" constant="75" id="Io6-rx-QLm"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="Frontal"/>
+                                <connections>
+                                    <action selector="tomarFrontal:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fjd-mY-uGF"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vGy-tF-Q6O">
+                                <rect key="frame" x="280" y="542" width="79" height="42"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="42" id="KNP-3f-DGP"/>
+                                    <constraint firstAttribute="width" constant="79" id="kkx-2x-IBn"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="Trasera"/>
+                                <connections>
+                                    <action selector="tomarTrasera:" destination="BYZ-38-t0r" eventType="touchUpInside" id="RBS-no-qm1"/>
+                                </connections>
+                            </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hqC-eS-ObQ">
+                                <rect key="frame" x="0.0" y="140" width="375" height="386"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="375" id="DSN-aB-53z"/>
+                                    <constraint firstAttribute="height" constant="386" id="jz0-j6-iGh"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8b3-y2-n52">
+                                <rect key="frame" x="211" y="605" width="148" height="42"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="42" id="FAL-Lc-bv0"/>
+                                    <constraint firstAttribute="width" constant="148" id="cKS-V6-WcM"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="Comprobante"/>
+                                <connections>
+                                    <action selector="tomarComprobante:" destination="BYZ-38-t0r" eventType="touchUpInside" id="T4k-3u-0UB"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="vGy-tF-Q6O" firstAttribute="top" secondItem="hqC-eS-ObQ" secondAttribute="bottom" constant="16" id="5e9-3u-Orj"/>
+                            <constraint firstItem="vGy-tF-Q6O" firstAttribute="leading" secondItem="9yk-l2-kiq" secondAttribute="trailing" constant="189" id="D14-DZ-bt0"/>
+                            <constraint firstItem="9yk-l2-kiq" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="EbD-PK-KjQ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="HeT-Li-Gfw" secondAttribute="bottom" constant="20" id="F92-GB-YCl"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="8b3-y2-n52" secondAttribute="bottom" constant="20" id="TA7-4L-9p2"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="8b3-y2-n52" secondAttribute="trailing" constant="16" id="TCy-Fq-Slr"/>
+                            <constraint firstItem="HeT-Li-Gfw" firstAttribute="top" secondItem="9yk-l2-kiq" secondAttribute="bottom" constant="21" id="WP0-ou-tTj"/>
+                            <constraint firstItem="9yk-l2-kiq" firstAttribute="top" secondItem="hqC-eS-ObQ" secondAttribute="bottom" constant="16" id="bXT-Iv-SGU"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="vGy-tF-Q6O" secondAttribute="trailing" constant="16" id="hD8-KK-w4Y"/>
+                            <constraint firstItem="vGy-tF-Q6O" firstAttribute="leading" secondItem="9yk-l2-kiq" secondAttribute="trailing" constant="189" id="hc2-sX-qrW"/>
+                            <constraint firstItem="8b3-y2-n52" firstAttribute="top" secondItem="vGy-tF-Q6O" secondAttribute="bottom" constant="21" id="nIu-uI-uLI"/>
+                            <constraint firstItem="HeT-Li-Gfw" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="nty-sO-Sah"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="dataImage" destination="hqC-eS-ObQ" id="BE9-bQ-B4e"/>
+                        <outlet property="tituloAccion" destination="EGe-21-5lc" id="Kc6-Xx-Nh3"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="101.59999999999999" y="56.221889055472268"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
