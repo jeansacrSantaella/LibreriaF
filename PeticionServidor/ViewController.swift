@@ -25,66 +25,65 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
 
     @IBAction func tomarFrontal(_ sender: Any) {
         //Se asigna una nueva URL
-        nuevaConexion.setURL(nueva: "https://wp8mrbv9qd.execute-api.us-east-1.amazonaws.com/prod/frontal/")
+        nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/frontal/")
         nuevaConexion.tipoOtro()
-        self.imagePicker.present(from: sender as! UIView)
-        //Se toma imagen del carrete
-        /*if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.photoLibrary){
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
-            imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
+            imagePicker.sourceType = UIImagePickerController.SourceType.camera
             imagePicker.allowsEditing = true
             self.present(imagePicker,animated: true,completion: nil)
         }else{
-            print("No se pudo acceder al carrete de imagenes")
-        }*/
+            print("No se pudo acceder a la camara")
+        }
     }
     
     @IBAction func tomarTrasera(_ sender: Any) {
         //se asigna la nueva URL
-        nuevaConexion.setURL(nueva: "https://wp8mrbv9qd.execute-api.us-east-1.amazonaws.com/prod/reverso/")
+        nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/reverso/")
         nuevaConexion.tipoOtro()
         //Funcion para subir foto de carrete
-        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.photoLibrary){
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
-            imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
+            imagePicker.sourceType = UIImagePickerController.SourceType.camera
             imagePicker.allowsEditing = true
             self.present(imagePicker,animated: true,completion: nil)
         }else{
-            print("No se pudo acceder al carrete de imagenes")
+            print("No se pudo acceder a la camara")
         }
     }
     
     
     @IBAction func tomarSelfie(_ sender: Any) {
-        nuevaConexion.setURL(nueva: "https://wp8mrbv9qd.execute-api.us-east-1.amazonaws.com/prod/ine-selfie/")
+        nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/ine-selfie/")
         nuevaConexion.tipoSelfie()
         nuevaConexion.setFaceId(nuevoFaceid: "1231212313132")
         print("La url es \(nuevaConexion.getURL()) ")
-        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.photoLibrary){
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
-            imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
+            imagePicker.sourceType = UIImagePickerController.SourceType.camera
+            imagePicker.cameraDevice = .front
             imagePicker.allowsEditing = true
             self.present(imagePicker,animated: true,completion: nil)
         }else{
-            print("No se pudo acceder al carrete de imagenes")
+            print("No se pudo acceder a la camara")
         }
     }
     
     
     @IBAction func tomarComprobante(_ sender: Any) {
-        nuevaConexion.setURL(nueva: "https://wp8mrbv9qd.execute-api.us-east-1.amazonaws.com/prod/cfe/")
+        nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/cfe/")
         nuevaConexion.tipoOtro()
-        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.photoLibrary){
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
-            imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
+            imagePicker.sourceType = UIImagePickerController.SourceType.camera
             imagePicker.allowsEditing = true
             self.present(imagePicker,animated: true,completion: nil)
         }else{
-            print("No se pudo acceder al carrete de imagenes")
+            print("No se pudo acceder a la camara")
         }
     }
     enum ConnectionResult {
@@ -98,6 +97,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
             self.dataImage.image = pickedImage
             let _:NSData = pickedImage.pngData()! as NSData
             //Convertir a base64
+            tituloAccion.text = "Procesando..."
             let strBase64 = ConvertImageToBase64String(img: pickedImage)
             nuevaConexion.setImagen(nuevaImagen: strBase64)
             nuevaConexion.crearConexion {
@@ -109,7 +109,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
     }
     // recibe una imagen en string /base 64
     func postOCR(cuerpo:String){
-        //Recupera la url de la clase conexion
+                //Recupera la url de la clase conexion
         let Url = String(format: nuevaConexion.getURL())
             guard let serviceUrl = URL(string: Url) else { return }
         //se concatena la imagen en base 64
