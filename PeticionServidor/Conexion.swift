@@ -97,7 +97,7 @@ class Conexion {
                     self.crearConexion(completion: <#T##((String) -> Void)##((String) -> Void)##(String) -> Void#>)
                 }*/
             }
-            else if let data = data {
+            else if let data = data{
                 print(data)
                 do {
                     let json:String = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! String

@@ -27,10 +27,10 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         //Se asigna una nueva URL
         nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/frontal/")
         nuevaConexion.tipoOtro()
-        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.photoLibrary){
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
-            imagePicker.sourceType = UIImagePickerController.SourceType.camera
+            imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
             imagePicker.allowsEditing = true
             self.present(imagePicker,animated: true,completion: nil)
         }else{
@@ -170,7 +170,9 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
     func ConvertImageToBase64String (img: UIImage) -> String {
         let imageData:NSData = img.jpegData(compressionQuality: 0.50)! as NSData //UIImagePNGRepresentation(img)
         let imgString = imageData.base64EncodedString(options: .init(rawValue: 0))
-        return imgString
+        let replaced = imgString.replacingOccurrences(of: "\n", with: "")
+        print(replaced)
+        return replaced
     }
     
 }
