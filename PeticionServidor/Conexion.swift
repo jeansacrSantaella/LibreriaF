@@ -81,8 +81,7 @@ class Conexion {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         let httpBody = try! JSONSerialization.data(withJSONObject: parameters, options: .fragmentsAllowed)
         request.httpBody = httpBody
-    
-        request.timeoutInterval = 2000
+        request.timeoutInterval = 200000
         //request.timeoutInterval = 200
         let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) in
@@ -90,12 +89,10 @@ class Conexion {
           if let response = response {
             print(response)
           }
-            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {           // check for http errors
+            if let httpStatus = response as? HTTPURLResponse, (httpStatus.statusCode != 200 && httpStatus.statusCode != 220) { // check for http errors
                     print("codigo de servidor \(httpStatus.statusCode)")
-                completion("codigo de servidor \(httpStatus.statusCode)")
-                /*if(httpStatus.statusCode==220){
-                    self.crearConexion(completion: <#T##((String) -> Void)##((String) -> Void)##(String) -> Void#>)
-                }*/
+                    completion("codigo de servidor \(httpStatus.statusCode)")
+
             }
             else if let data = data{
                 print(data)

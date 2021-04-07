@@ -3,15 +3,14 @@
 //  PeticionServidor
 //
 //
-
 import UIKit
-
 class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
-
     @IBOutlet weak var tituloAccion: UILabel!
     //Se declara explicitamente hasta que se pulce algun btn. es global y opcional
     var nuevaConexion = Conexion()
     var imagePicker: ImagePicker!
+    var comprobante:Bool=true
+    var faceID:String=""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,10 +26,12 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         //Se asigna una nueva URL
         nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/frontal/")
         nuevaConexion.tipoOtro()
-        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.photoLibrary){
+        self.comprobante=false
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
-            imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
+            
+            imagePicker.sourceType = UIImagePickerController.SourceType.camera
             imagePicker.allowsEditing = true
             self.present(imagePicker,animated: true,completion: nil)
         }else{
@@ -42,6 +43,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         //se asigna la nueva URL
         nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/reverso/")
         nuevaConexion.tipoOtro()
+        self.comprobante=false
         //Funcion para subir foto de carrete
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
             let imagePicker = UIImagePickerController()
@@ -58,6 +60,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
     @IBAction func tomarSelfie(_ sender: Any) {
         nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/ine-selfie/")
         nuevaConexion.tipoSelfie()
+        self.comprobante=false
         nuevaConexion.setFaceId(nuevoFaceid: "1231212313132")
         print("La url es \(nuevaConexion.getURL()) ")
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
@@ -76,11 +79,13 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
     @IBAction func tomarComprobante(_ sender: Any) {
         nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/cfe/")
         nuevaConexion.tipoOtro()
+        self.comprobante=true
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
             imagePicker.sourceType = UIImagePickerController.SourceType.camera
             imagePicker.allowsEditing = true
+            imagePicker.delegate = self
             self.present(imagePicker,animated: true,completion: nil)
         }else{
             print("No se pudo acceder a la camara")
@@ -95,6 +100,16 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage{
             self.dataImage.image = pickedImage
+
+            /*if let img = info[.editedImage] as? UIImage {
+                self.dataImage.image = img
+                } else if let img = info[.originalImage] as? UIImage {
+                    self.dataImage.image = img
+                }*/
+            if(self.comprobante){
+                self.dataImage.image = self.dataImage.image?.rotate(radians: 4.71239)
+            }
+
             let _:NSData = pickedImage.pngData()! as NSData
             //Convertir a base64
             tituloAccion.text = "Procesando..."
@@ -103,59 +118,17 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
             nuevaConexion.crearConexion {
                 salida in
                 self.tituloAccion.text = salida
+                var replaced = salida.replacingOccurrences(of: "[{\"resultado\":", with: "")
+                replaced = replaced.replacingOccurrences(of: "}]", with: "")
+                //replaced = replaced.replacingOccurrences(of: "{\"VALOR\":", with: "{")
+                let jsre=replaced.toDictionary()
+                print (jsre)
+                let res = jsre["FACE_ID"]
+                print (res.)
             }
         }
         picker.dismiss(animated: true, completion: nil)
     }
-    // recibe una imagen en string /base 64
-    func postOCR(cuerpo:String){
-                //Recupera la url de la clase conexion
-        let Url = String(format: nuevaConexion.getURL())
-            guard let serviceUrl = URL(string: Url) else { return }
-        //se concatena la imagen en base 64
-            let enviar = "data:image/png;base64,"+cuerpo
-        //se guarda en la variable a pasar en el body
-        let parameters: [String: Any];
-        if(nuevaConexion.esSelfie()){
-            parameters = ["FACE_ID":"1231212142","img": enviar]
-        }else{
-            parameters = ["img": enviar]
-        }
-            var request = URLRequest(url: serviceUrl)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: .fragmentsAllowed) else {
-                return
-            }
-            request.httpBody = httpBody
-        
-            request.timeoutInterval = 50
-            let session = URLSession.shared
-            session.dataTask(with: request) { (data, response, error) in
-                if let response = response {
-                    //print("response")
-                    print(response)
-                }
-                if let data = data {
-                    print(data)
-                    do {
-                        //Respuesta de la peticion
-                        if(!data.isEmpty){
-                            let json:String = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! String
-                                print(json)
-                                self.tituloAccion.text = json
-                        }else{
-                            self.tituloAccion.text = "No se econtro información"
-                        }
-                    } catch {
-                        //Error cachado
-                        print("Error")
-                        self.tituloAccion.text = "Error revise el log"
-                        print(error)
-                    }
-                }
-            }.resume()
-        }
     //Convierte josn any a strings
     func jsonToString(json: AnyObject){
         do {
@@ -165,15 +138,37 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         } catch let myJSONError {
             print(myJSONError)
         }
-        
     }
+    
     func ConvertImageToBase64String (img: UIImage) -> String {
-        let imageData:NSData = img.jpegData(compressionQuality: 0.50)! as NSData //UIImagePNGRepresentation(img)
+        let targetSize = CGSize(width: 750, height: 500)
+        //let targetSize = CGSize(width: 300, height: 200)
+               let widthScaleRatio = targetSize.width / img.size.width
+               let heightScaleRatio = targetSize.height / img.size.height
+               
+               let scaleFactor = min(widthScaleRatio, heightScaleRatio)
+               
+               let scaledImageSize = CGSize(
+                   width: img.size.width * scaleFactor,
+                   height: img.size.height * scaleFactor
+               )
+               let renderer = UIGraphicsImageRenderer(
+                          size: scaledImageSize
+                      )
+
+        _ = renderer.image { _ in
+                          img.draw(in: CGRect(
+                              origin: .zero,
+                              size: scaledImageSize
+                          ))
+                      }
+        let imageData:NSData = img.jpegData(compressionQuality: 0.10)! as NSData //UIImagePNGRepresentation(img)
         let imgString = imageData.base64EncodedString(options: .init(rawValue: 0))
         let replaced = imgString.replacingOccurrences(of: "\n", with: "")
-        print(replaced)
+        print(imgString.count)
         return replaced
     }
+    
     
 }
 extension ViewController: ImagePickerDelegate {
@@ -181,4 +176,51 @@ extension ViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?) {
         self.dataImage.image = image
     }
+}
+
+extension UIImage {
+    func cropped(boundingBox: CGRect) -> UIImage? {
+        guard let cgImage = self.cgImage?.cropping(to: boundingBox) else {
+            return nil
+        }
+
+        return UIImage(cgImage: cgImage)
+    }
+}
+
+extension UIImage {
+    func rotate(radians: CGFloat) -> UIImage {
+        let rotatedSize = CGRect(origin: .zero, size: size)
+            .applying(CGAffineTransform(rotationAngle: CGFloat(radians)))
+            .integral.size
+        UIGraphicsBeginImageContext(rotatedSize)
+        if let context = UIGraphicsGetCurrentContext() {
+            let origin = CGPoint(x: rotatedSize.width / 2.0,
+                                 y: rotatedSize.height / 2.0)
+            context.translateBy(x: origin.x, y: origin.y)
+            context.rotate(by: radians)
+            draw(in: CGRect(x: -origin.y, y: -origin.x,
+                            width: size.width, height: size.height))
+            let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+
+            return rotatedImage ?? self
+        }
+
+        return self
+    }
+}
+
+extension String{
+   func toDictionary() -> NSDictionary {
+       let blankDict : NSDictionary = [:]
+       if let data = self.data(using: .utf8) {
+           do {
+               return try JSONSerialization.jsonObject(with: data, options: []) as! NSDictionary
+           } catch {
+               print(error.localizedDescription)
+           }
+       }
+       return blankDict
+   }
 }
