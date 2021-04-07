@@ -84,10 +84,10 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         nuevaConexion.tipoOtro()
         self.comprobante=true
         self.selfie=false
-        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.photoLibrary){
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
-            imagePicker.sourceType = UIImagePickerController.SourceType.camera
+            imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
             imagePicker.allowsEditing = true
             imagePicker.delegate = self
             self.present(imagePicker,animated: true,completion: nil)
@@ -102,8 +102,10 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
 
     //Función del sistema para obtener la imagen capturada del uiimage
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage{
-            self.dataImage.image = pickedImage
+        if let pickedImage1 = info[UIImagePickerController.InfoKey.originalImage] as? UIImage{
+            self.dataImage.image = pickedImage1
+            
+            let pickedImage = pickedImage1.fixedOrientation()
 
             let targetSize = CGSize(width: 350, height: 200)
             
@@ -204,7 +206,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         let imageData:NSData = img.jpegData(compressionQuality: 0.10)! as NSData //UIImagePNGRepresentation(img)
         let imgString = imageData.base64EncodedString(options: .init(rawValue: 0))
         //let replaced = imgString.replacingOccurrences(of: "\n", with: "")
-        print(imgString.count)
+        print(imgString)
         return imgString
     }
     
@@ -247,6 +249,86 @@ extension UIImage {
         }
 
         return self
+    }
+}
+
+extension UIImage {
+
+    func fixedOrientation() -> UIImage {
+        // No-op if the orientation is already correct
+        if (imageOrientation == UIImage.Orientation.up) {
+            return self
+        }
+
+        // We need to calculate the proper transformation to make the image upright.
+        // We do it in 2 steps: Rotate if Left/Right/Down, and then flip if Mirrored.
+        var transform:CGAffineTransform = CGAffineTransform.identity
+
+        if (imageOrientation == UIImage.Orientation.down
+                || imageOrientation == UIImage.Orientation.downMirrored) {
+
+            transform = transform.translatedBy(x: size.width, y: size.height)
+            transform = transform.rotated(by: CGFloat(M_PI))
+        }
+
+        if (imageOrientation == UIImage.Orientation.left
+                || imageOrientation == UIImage.Orientation.leftMirrored) {
+
+            transform = transform.translatedBy(x: size.width, y: 0)
+            transform = transform.rotated(by: CGFloat(M_PI_2))
+        }
+
+        if (imageOrientation == UIImage.Orientation.right
+                || imageOrientation == UIImage.Orientation.rightMirrored) {
+
+            transform = transform.translatedBy(x: 0, y: size.height);
+            transform = transform.rotated(by: CGFloat(-M_PI_2));
+        }
+
+        if (imageOrientation == UIImage.Orientation.upMirrored
+                || imageOrientation == UIImage.Orientation.downMirrored) {
+
+            transform = transform.translatedBy(x: size.width, y: 0)
+            transform = transform.scaledBy(x: -1, y: 1)
+        }
+
+        if (imageOrientation == UIImage.Orientation.leftMirrored
+                || imageOrientation == UIImage.Orientation.rightMirrored) {
+
+            transform = transform.translatedBy(x: size.height, y: 0);
+            transform = transform.scaledBy(x: -1, y: 1);
+        }
+
+
+        // Now we draw the underlying CGImage into a new context, applying the transform
+        // calculated above.
+        let ctx:CGContext = CGContext(data: nil, width: Int(size.width), height: Int(size.height),
+                                      bitsPerComponent: cgImage!.bitsPerComponent, bytesPerRow: 0,
+                                      space: cgImage!.colorSpace!,
+                                      bitmapInfo: cgImage!.bitmapInfo.rawValue)!
+
+        ctx.concatenate(transform)
+
+
+        if (imageOrientation == UIImage.Orientation.left
+                || imageOrientation == UIImage.Orientation.leftMirrored
+                || imageOrientation == UIImage.Orientation.right
+                || imageOrientation == UIImage.Orientation.rightMirrored
+            ) {
+
+
+            ctx.draw(cgImage!, in: CGRect(x:0,y:0,width:size.height,height:size.width))
+
+        } else {
+            ctx.draw(cgImage!, in: CGRect(x:0,y:0,width:size.width,height:size.height))
+        }
+
+
+        // And now we just create a new UIImage from the drawing context
+        let cgimg:CGImage = ctx.makeImage()!
+        let imgEnd:UIImage = UIImage(cgImage: cgimg)
+
+        return imgEnd
     }
 }
 
