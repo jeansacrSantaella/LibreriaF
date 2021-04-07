@@ -105,6 +105,28 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage{
             self.dataImage.image = pickedImage
 
+            let targetSize = CGSize(width: 350, height: 200)
+            
+            let widthScaleRatio = targetSize.width / pickedImage.size.width
+            let heightScaleRatio = targetSize.height / pickedImage.size.height
+            let scaleFactor = min(widthScaleRatio, heightScaleRatio)
+            
+            let scaledImageSize = CGSize(
+                width: pickedImage.size.width * scaleFactor,
+                height: pickedImage.size.height * scaleFactor
+            )
+            let renderer = UIGraphicsImageRenderer(
+                       size: scaledImageSize
+                   )
+
+     _ = renderer.image { _ in
+        pickedImage.draw(in: CGRect(
+                           origin: .zero,
+                           size: scaledImageSize
+                       ))
+                   }
+            
+            //let imageData:NSData = pickedImage.jpegData(compressionQuality: 0.10)! as NSData
             // para cortar la imagen
              /*if let img = info[.editedImage] as? UIImage {
                 self.dataImage.image = img
