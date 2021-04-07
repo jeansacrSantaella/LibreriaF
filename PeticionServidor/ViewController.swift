@@ -9,7 +9,8 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
     //Se declara explicitamente hasta que se pulce algun btn. es global y opcional
     var nuevaConexion = Conexion()
     var imagePicker: ImagePicker!
-    var comprobante:Bool=true
+    var comprobante:Bool=false
+    var selfie:Bool=false
     var faceID:String=""
 
     override func viewDidLoad() {
@@ -27,6 +28,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/frontal/")
         nuevaConexion.tipoOtro()
         self.comprobante=false
+        self.selfie=true
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
@@ -44,6 +46,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/reverso/")
         nuevaConexion.tipoOtro()
         self.comprobante=false
+        self.selfie=false
         //Funcion para subir foto de carrete
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
             let imagePicker = UIImagePickerController()
@@ -61,7 +64,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/ine-selfie/")
         nuevaConexion.tipoSelfie()
         self.comprobante=false
-        nuevaConexion.setFaceId(nuevoFaceid: "1231212313132")
+        self.selfie=false
         print("La url es \(nuevaConexion.getURL()) ")
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
             let imagePicker = UIImagePickerController()
@@ -80,6 +83,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         nuevaConexion.setURL(nueva: "https://d2qx3bqvr4h3ci.cloudfront.net/cfe/")
         nuevaConexion.tipoOtro()
         self.comprobante=true
+        self.selfie=false
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
@@ -101,14 +105,17 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage{
             self.dataImage.image = pickedImage
 
-            /*if let img = info[.editedImage] as? UIImage {
+            // para cortar la imagen
+             /*if let img = info[.editedImage] as? UIImage {
                 self.dataImage.image = img
                 } else if let img = info[.originalImage] as? UIImage {
                     self.dataImage.image = img
-                }*/
+                }
             if(self.comprobante){
+                //rotar imagen es en radianes
                 self.dataImage.image = self.dataImage.image?.rotate(radians: 4.71239)
-            }
+                //self.dataImage.image = self.dataImage.image?.rotate(radians: 1.5708)
+            }*/
 
             let _:NSData = pickedImage.pngData()! as NSData
             //Convertir a base64
@@ -118,13 +125,23 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
             nuevaConexion.crearConexion {
                 salida in
                 self.tituloAccion.text = salida
+                if(self.selfie){
                 var replaced = salida.replacingOccurrences(of: "[{\"resultado\":", with: "")
                 replaced = replaced.replacingOccurrences(of: "}]", with: "")
-                //replaced = replaced.replacingOccurrences(of: "{\"VALOR\":", with: "{")
                 let jsre=replaced.toDictionary()
-                print (jsre)
                 let res = jsre["FACE_ID"]
-                print (res.)
+                let str1 = String (describing: res)
+                                let str0 = str1.replacingOccurrences(of: "Optional({", with: "")
+                                let str = str0.replacingOccurrences(of: "VALOR =", with:"")
+                                let str2 = str.replacingOccurrences(of: ";", with: "")
+                                let str3 = str2.replacingOccurrences(of: "})", with: "")
+                                let trimed = str3.trimmingCharacters(in: .whitespacesAndNewlines)
+                                let integer = Int(trimed) ?? 0
+                                self.faceID=trimed
+                        print(trimed)
+                    self.nuevaConexion.setFaceId(nuevoFaceid: trimed)
+                                print (integer)
+                }
             }
         }
         picker.dismiss(animated: true, completion: nil)
@@ -141,8 +158,8 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
     }
     
     func ConvertImageToBase64String (img: UIImage) -> String {
-        let targetSize = CGSize(width: 750, height: 500)
-        //let targetSize = CGSize(width: 300, height: 200)
+        //let targetSize = CGSize(width: 450, height: 250)
+        let targetSize = CGSize(width: 350, height: 200)
                let widthScaleRatio = targetSize.width / img.size.width
                let heightScaleRatio = targetSize.height / img.size.height
                
@@ -164,9 +181,9 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
                       }
         let imageData:NSData = img.jpegData(compressionQuality: 0.10)! as NSData //UIImagePNGRepresentation(img)
         let imgString = imageData.base64EncodedString(options: .init(rawValue: 0))
-        let replaced = imgString.replacingOccurrences(of: "\n", with: "")
+        //let replaced = imgString.replacingOccurrences(of: "\n", with: "")
         print(imgString.count)
-        return replaced
+        return imgString
     }
     
     

@@ -13,7 +13,7 @@ class Conexion {
     var limite:Int = 3
     var selfie:Bool=false
     var respuesta:String=""
-    var faceID:String=""
+    var faceID:String="12312312"
     
     func getRespuesta()->String{
         return respuesta
@@ -72,6 +72,8 @@ class Conexion {
         let enviar = "data:image/png;base64,"+imagen
         let parameters: [String: Any];
         if(selfie){
+            print("entre a comunicacion servidor")
+            print(faceID)
             parameters = ["FACE_ID":faceID,"img": enviar]
         }else{
             parameters = ["img": enviar]
